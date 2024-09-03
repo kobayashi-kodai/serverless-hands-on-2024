@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  serverless hands-on (sample-code)
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Architectures:
+        - x86_64
+    Timeout: 3
+
+Resources:
+  HelloWorldFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello-world/
+      Handler: hello.handler
+      # Lambdaのロールを設定
+      Role: arn:aws:iam::xxxxxxxxxx:role/xxxxxxxxxx
+
+  RedirectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello-world/
+      Handler: redirect.handler
+      # 応用問題はこちらを利用 (redirect2.mjs)
+      # Handler: redirect2.handler
+      # Lambdaのロールを設定
+      Role: arn:aws:iam::xxxxxxxxxx:role/xxxxxxxxxx
+      Events:
+        Redirect:
+          Type: Api
+          Properties:
+            Path: /redirect
+            Method: get
+
+  # 応用問題
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      # YOUR TABLE NAME: テーブル名を設定
+      TableName: <YOUR TABLE NAME>
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+Outputs:
+  # Hello関数のARNを出力
+  HelloWorldFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt HelloWorldFunction.Arn
+  # Redirect関数のARNを出力
+  RedirectFunction:
+    Description: "Redirect Lambda Function ARN"
+    Value: !GetAtt RedirectFunction.Arn
+  # Redirect関数のAPI Gatewayエンドポイントを出力
+  RedirectApi:
+    Description: "API Gateway endpoint URL for Prod stage for Redirect function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/redirect/"
