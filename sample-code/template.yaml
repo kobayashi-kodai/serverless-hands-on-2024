@@ -50,6 +50,18 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
+  # AWS::Serverless::SimpleTable を利用する場合
+  # DynamoDBTable:
+  #   Type: AWS::Serverless::SimpleTable
+  #   Properties:
+  #     # YOUR TABLE NAME: テーブル名を設定
+  #     TableName: <YOUR TABLE NAME>
+  #     PrimaryKey:
+  #       Name: id
+  #       Type: String
+  #     ProvisionedThroughput:
+  #       ReadCapacityUnits: 1
+  #       WriteCapacityUnits: 1
 
 Outputs:
   # Hello関数のARNを出力
